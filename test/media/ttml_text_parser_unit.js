@@ -17,17 +17,21 @@
 
 describe('TtmlTextParser', function() {
   var originalVTTCue;
+  var originalTextTrackCue;
 
   beforeAll(function() {
     originalVTTCue = window.VTTCue;
+    originalTextTrackCue = window.TextTrackCue;
   });
 
   afterAll(function() {
     window.VTTCue = originalVTTCue;
+    window.TextTrackCue = originalTextTrackCue;
   });
 
   beforeEach(function() {
-    window.VTTCue = function(start, end, text) {
+    window.VTTCue = function() {};
+    window.TextTrackCue = function(start, end, text) {
       this.startTime = start;
       this.endTime = end;
       this.text = text;
@@ -493,7 +497,8 @@ describe('TtmlTextParser', function() {
 
   it('uses a workaround for browsers not supporting align=center', function() {
 
-    window.VTTCue = function(start, end, text) {
+    window.VTTCue = function() {};
+    window.TextTrackCue = function(start, end, text) {
       var align = 'middle';
       Object.defineProperty(this, 'align', {
         get: function() { return align; },

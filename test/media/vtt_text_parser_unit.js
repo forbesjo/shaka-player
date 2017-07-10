@@ -18,9 +18,12 @@
 describe('VttTextParser', function() {
   var logWarningSpy;
   var originalVTTCue;
+  var originalTextTrackCue;
+  var noop = function() {};
 
   beforeAll(function() {
     originalVTTCue = window.VTTCue;
+    originalTextTrackCue = window.TextTrackCue;
 
     logWarningSpy = jasmine.createSpy('shaka.log.warning');
     shaka.log.warning = logWarningSpy;
@@ -28,11 +31,13 @@ describe('VttTextParser', function() {
 
   afterAll(function() {
     window.VTTCue = originalVTTCue;
+    window.TextTrackCue = originalTextTrackCue;
   });
 
   beforeEach(function() {
     logWarningSpy.calls.reset();
-    window.VTTCue = function(start, end, text) {
+    window.VTTCue = noop;
+    window.TextTrackCue = function(start, end, text) {
       this.startTime = start;
       this.endTime = end;
       this.text = text;
@@ -43,6 +48,9 @@ describe('VttTextParser', function() {
     verifyHelper([],
         'WEBVTT',
         { periodStart: 0, segmentStart: 0, segmentEnd: 0 });
+
+    // window.VTTCue is not overwritten
+    expect(window.VTTCue).toBe(noop);
   });
 
   it('supports initial comments', function() {
